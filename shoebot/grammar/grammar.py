@@ -249,7 +249,7 @@ class Grammar(object):
 
             event = None
 
-            while iteration != iterations and not event_is(event, QUIT_EVENT):
+            while self._should_run(iteration, iterations) and not event_is(event, QUIT_EVENT):
                 # do the magic
 
                 # First iteration
