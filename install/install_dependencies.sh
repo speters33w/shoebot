@@ -128,10 +128,6 @@ elif [ "MinGW64" = "$OS" ]; then
     INSTALL=install_pacman	
 elif [ "Darwin" = "$OS" ]; then
     get_osx_packages_and_installer
-elif [ "MinGW64" = "$OS" ]; then
-    PACKAGE_MANAGER="pacman"
-    PACKAGES=$MINGW64_PACKAGES
-    INSTALL=install_pacman
 fi
 
 if [[ -z ${INSTALL} ]]; then
