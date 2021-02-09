@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -x
+# Uncomment next line to view execution.
+# set -x
 
 # Fedora, Redhat, (Centos?)
 FEDORA_PACKAGES="redhat-rpm-config gcc cairo-devel libjpeg-devel python3-devel python3-gobject cairo-gobject"
@@ -14,6 +15,10 @@ DEB_PACKAGES="build-essential gir1.2-gtk-3.0 gir1.2-rsvg-2.0 gobject-introspecti
 # Mac OSX (keep in alphabetical order: tested to match those in .travis)
 HOMEBREW_PACKAGES="cairo gobject-introspection gtk+3 gtksourceview3 jpeg libffi librsvg py3cairo pygobject3"
 MACPORTS_PACKAGES="gtk3 py37-gobject gobject-introspection jpeg librsvg cairo cairo-devel py37-cairo gtksourceview3"
+
+#MinGW64 (Windows) (install in this order)
+MINGW64_PACKAGES="mingw-w64-x86_64-python mingw-w64-x86_64-gtk3 mingw-w64-x86_64-python3-gobject mingw-w64-x86_64-gtksourceview3 mingw-w64-x86_64-python-pillow mingw-w64-x86_64-python-pip git" 
+#mingw-w64-x86_64-python-pip and git are not dependencies but are required for git clone https://github.com/shoebot/shoebot and python setup.py install 
 
 install_apt() {
     sudo apt-get install -y $PACKAGES
@@ -34,6 +39,10 @@ install_homebrew() {
 install_macports() {
     >&2 echo "Using macports, this is unsupported, let us know if it works."
     sudo port install $PACKAGES
+}
+
+install_pacman() {
+    pacman -S $PACKAGES
 }
 
 get_osx_packages_and_installer() {
@@ -92,6 +101,11 @@ elif [ -f /etc/SuSE-release ]; then
 else
     OS=$(uname -s)
     VER=$(uname -r)
+	if [ "${OS:0:7}" = "MSYS_NT" ]; then
+        OS=MinGW64 
+    elif [ "${OS:0:7}" = "MINGW64" ]; then
+        OS=MinGW64
+    fi
 fi
 
 if [ "Debian" = "$OS" ] || \
@@ -110,6 +124,10 @@ elif [ "SuSE" = "$OS" ]; then
     INSTALL=install_zypper
 elif [ "Darwin" = "$OS" ]; then
     get_osx_packages_and_installer
+elif [ "MinGW64" = "$OS" ]; then
+    PACKAGE_MANAGER="pacman"
+    PACKAGES=$MINGW64_PACKAGES
+    INSTALL=install_pacman
 fi
 
 if [[ -z ${INSTALL} ]]; then
