@@ -96,7 +96,7 @@ Run ``Msys2 Sys`` from the Start Menu and enter:
 
 .. code:: 
 
-    ./install/install_dependencies.sh
+    ./install_dependencies.sh
 	
 When that is complete enter:
 
